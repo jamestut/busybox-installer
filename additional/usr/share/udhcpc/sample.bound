@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Sample udhcpc renew script
 
 RESOLV_CONF="/etc/udhcpc/resolv.conf"

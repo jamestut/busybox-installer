@@ -28,6 +28,7 @@ fi
 
 TARGET_DIR=bin/
 BUSYBOX_BIN="$1/$TARGET_DIR/busybox"
+BUSYBOX_ABS_BIN=/$TARGET_DIR/busybox
 
 # trap any errors and report to user
 set -e
@@ -47,12 +48,14 @@ chown 0:0 "$BUSYBOX_BIN"
 chmod 755 "$BUSYBOX_BIN"
 
 echo Creating symlinks ...
+# ignore errors when creating these symlinks. files might already exists.
+set +e
 SYMLIST=`"$BUSYBOX_BIN" --list-full`
 for FN in $SYMLIST
 do
   SYMPATH="$1/$FN"
   echo "  $SYMPATH"
-  ln -s "$BUSYBOX_BIN" "$SYMPATH"
+  ln -s $BUSYBOX_ABS_BIN "$SYMPATH"
   chown 0:0 "$SYMPATH"
   chmod 755 "$SYMPATH"
 done
@@ -60,6 +63,7 @@ done
 if test -d additional; then
   echo "Found the 'additional' directory. Copying these as well."
   echo Copying to temporary directory ...
+  set -e
   TMPDIR=`mktemp -d`
   cp -r additional $TMPDIR/
   echo Setting owner ...
